@@ -1,0 +1,14 @@
+logging:
+  pattern:
+    console: "%d{MMM dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+  level:
+    root: INFO
+    #java: DEBUG
+
+spring:
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+auth0:
+  issuer: https://tvirdee.eu.auth0.com/
+  apiAudience: https://tvirdee.eu.auth0.com/api/v2/
