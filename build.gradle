@@ -7,6 +7,7 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("org.liquibase:liquibase-gradle-plugin:2.0.1")
 	}
 }
 
@@ -14,6 +15,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.liquibase.gradle'
 
 group = 'com.reading.tvirdee.project'
 version = '0.0.1-SNAPSHOT'
@@ -25,21 +27,20 @@ repositories {
 
 
 dependencies {
-	compile('org.projectlombok:lombok:1.18.4')
+	
 	compile('org.springframework.boot:spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile("org.springframework.boot:spring-boot-starter-security")
-	compile("org.springframework.security:spring-security-config")
-	compile("org.springframework.security:spring-security-data")
-	compile("org.springframework.security:spring-security-web")
 	compile('com.auth0:auth0-spring-security-api:1.0.0-rc.3')
-	compile('org.liquibase:liquibase-core')
-	compile('mysql:mysql-connector-java')
 	compile('com.h2database:h2')
 	compile('io.springfox:springfox-swagger2:2.9.2')
 	compile('io.springfox:springfox-core:2.9.2')
 	compile('io.springfox:springfox-swagger-ui:2.9.2')
+
+	liquibaseRuntime('org.liquibase:liquibase-core')
+	liquibaseRuntime('org.liquibase:liquibase-groovy-dsl:2.0.1')
+	liquibaseRuntime('mysql:mysql-connector-java')
 	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
