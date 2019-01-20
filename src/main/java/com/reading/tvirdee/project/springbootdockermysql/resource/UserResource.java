@@ -1,6 +1,6 @@
 package com.reading.tvirdee.project.springbootdockermysql.resource;
 
-import com.reading.tvirdee.project.springbootdockermysql.entity.Users;
+import com.reading.tvirdee.project.springbootdockermysql.domain.Users;
 import com.reading.tvirdee.project.springbootdockermysql.repository.UserRepository;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 import org.slf4j.Logger;

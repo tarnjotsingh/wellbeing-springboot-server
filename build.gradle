@@ -39,16 +39,17 @@ dependencies {
 	compile('com.h2database:h2')
 	compile('mysql:mysql-connector-java')
 
-	runtime('com.h2database:h2')
-	runtime('mysql:mysql-connector-java')
-	runtime('org.liquibase:liquibase-core')
-	runtime('org.liquibase:liquibase-groovy-dsl:2.0.1')
-	
 	liquibaseRuntime('org.liquibase:liquibase-core')
 	liquibaseRuntime('org.liquibase:liquibase-groovy-dsl:2.0.1')
+	liquibaseRuntime('org.liquibase.ext:liquibase-hibernate5:3.6')
+	liquibaseRuntime("org.springframework.boot:spring-boot:2.0.1.RELEASE")
+	liquibaseRuntime('org.springframework:spring-orm:5.0.5.RELEASE')
 	liquibaseRuntime('mysql:mysql-connector-java')
 	liquibaseRuntime('com.h2database:h2')
-
+	/* Due to a bit of a bug with the liquibase-gradle-plugin, need to explicitly state 
+	  src/main as a dependency for the plugin to work correctly. */
+	liquibaseRuntime files('src/main')
+	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
@@ -56,12 +57,15 @@ dependencies {
 liquibase {
 	activities {
 		main {
-			//driver 'org.h2.Driver'
-			url 'jdbc:h2:mem:springtest'
-			username 'admin'
-			password 'admin'
-			classpath 'src/main/resources'
-			changeLogFile '/db/changelog/changelog-master.xml'
+			driver 'com.mysql.cj.jdbc.Driver'
+			url 'jdbc:mysql://localhost:3306/springdb'
+			username 'root'
+			password 'password'
+			referenceUrl 'hibernate:spring:com.reading.tvirdee' +
+					'?dialect=org.hibernate.dialect.MySQL5Dialect' +
+					'&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy' +
+					'&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy'
+			changeLogFile 'src/main/resources/db/changelog/changelog-master.yml'
 		}
 	}
 }

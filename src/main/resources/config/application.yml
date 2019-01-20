@@ -7,7 +7,7 @@ logging:
 
 spring:
   liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    change-log: classpath:/db/changelog/changelog-master.yml
 
 auth0:
   issuer: https://tvirdee.eu.auth0.com/

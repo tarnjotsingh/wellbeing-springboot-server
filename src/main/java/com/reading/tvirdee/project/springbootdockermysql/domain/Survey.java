@@ -1,4 +1,4 @@
-package com.reading.tvirdee.project.springbootdockermysql.entity;
+package com.reading.tvirdee.project.springbootdockermysql.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;

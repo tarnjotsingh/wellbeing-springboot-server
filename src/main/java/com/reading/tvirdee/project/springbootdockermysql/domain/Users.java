@@ -1,21 +1,22 @@
-package com.reading.tvirdee.project.springbootdockermysql.entity;
+package com.reading.tvirdee.project.springbootdockermysql.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Objects;
 
 
 @Entity
 @Table(name = "users")
-public class Users {
+public class Users implements Serializable{
 
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)     // Indicate that the primary key will be assigned by the persistence provider (e.g. mysql)
     @Column(name = "id")
-    private String id;
+    private Long id;
 
     @NotNull
     @Column(name = "role")
@@ -47,11 +48,11 @@ public class Users {
 //    private String password;
 
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
