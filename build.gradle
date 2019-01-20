@@ -33,14 +33,35 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile("org.springframework.boot:spring-boot-starter-security")
 	compile('com.auth0:auth0-spring-security-api:1.0.0-rc.3')
-	compile('com.h2database:h2')
 	compile('io.springfox:springfox-swagger2:2.9.2')
 	compile('io.springfox:springfox-core:2.9.2')
 	compile('io.springfox:springfox-swagger-ui:2.9.2')
+	compile('com.h2database:h2')
+	compile('mysql:mysql-connector-java')
 
+	runtime('com.h2database:h2')
+	runtime('mysql:mysql-connector-java')
+	runtime('org.liquibase:liquibase-core')
+	runtime('org.liquibase:liquibase-groovy-dsl:2.0.1')
+	
 	liquibaseRuntime('org.liquibase:liquibase-core')
 	liquibaseRuntime('org.liquibase:liquibase-groovy-dsl:2.0.1')
 	liquibaseRuntime('mysql:mysql-connector-java')
-	
+	liquibaseRuntime('com.h2database:h2')
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+
+liquibase {
+	activities {
+		main {
+			//driver 'org.h2.Driver'
+			url 'jdbc:h2:mem:springtest'
+			username 'admin'
+			password 'admin'
+			classpath 'src/main/resources'
+			changeLogFile '/db/changelog/changelog-master.xml'
+		}
+	}
 }

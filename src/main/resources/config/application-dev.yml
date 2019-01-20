@@ -2,22 +2,36 @@ server:
   port: 8081
 
 spring:
+  # Define the datasource, for this development profile we will use an in-memory h2 database
   datasource:
     url: jdbc:h2:mem:springtest;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: admin
     password: admin
+  # Enable the h2-console and can give it an alternative path
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
+      path: /console
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     database: H2
     show-sql: true
+    # Hibernate ensure spring does not handle creating the database.
+    # It ensures liquibase is dealing with it all on it's own.
+    hibernate:
+      ddl-auto: none
+
+  # Need to enable liquibase and give it a username and password to talk to the database with
+  # Changelog master is also defined for springboot
+  liquibase:
+    enabled: true
+    user: admin
+    password: admin
+    change-log: classpath:/db/changelog/changelog-master.xml
 
 logging:
   level:
-    root: DEBUG
-
+    root: INFO
