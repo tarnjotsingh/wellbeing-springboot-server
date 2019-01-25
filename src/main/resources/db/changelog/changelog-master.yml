@@ -50,8 +50,7 @@ databaseChangeLog:
     - createTable:
         columns:
         - column:
-            autoIncrement: true        columns:
-
+            autoIncrement: true
             constraints:
               primaryKey: true
             name: id

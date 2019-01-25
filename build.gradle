@@ -10,6 +10,9 @@ buildscript {
 		classpath("org.liquibase:liquibase-gradle-plugin:2.0.1")
 	}
 }
+//TODO Use the swagger to generate the appropriate code.
+//TODO Once the swagger is generated, can start looking into making it work with the database.
+//TODO Get an Angular/React client up and running for an initial prototype to demo.
 
 apply plugin: 'java'
 apply plugin: 'eclipse'

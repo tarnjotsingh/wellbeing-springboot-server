@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  swagger:
+    image: swaggerapi/swagger-editor
+    restart: always
+    ports:
+      - '8800:8080'
+    expose:
+      # Opens port 8080 on the container
+      - '8080'
