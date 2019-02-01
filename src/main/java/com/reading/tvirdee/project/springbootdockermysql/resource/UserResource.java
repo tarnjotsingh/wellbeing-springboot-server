@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api")
 public class UserResource{
 
-    Logger logger = LoggerFactory.getLogger(UserResource.class);
+    private Logger logger = LoggerFactory.getLogger(UserResource.class);
 
     private UserRepository userRepository;
     //private PasswordEncoder passwordEncoder;
@@ -32,7 +32,7 @@ public class UserResource{
         return s;
     }
 
-    @GetMapping(value = "/all")
+    @GetMapping(value = "/users")
     public List<Users> all() {
         logger.info("Returning all entities");
         return userRepository.findAll();
@@ -51,7 +51,7 @@ public class UserResource{
 //        return userRepository.findAll();
 //    }
 
-    @PostMapping(value = "/load")
+    @PostMapping(value = "/users")
     public List<Users> persist(@RequestBody final Users users) {
         userRepository.save(users);
         return userRepository.findAll();

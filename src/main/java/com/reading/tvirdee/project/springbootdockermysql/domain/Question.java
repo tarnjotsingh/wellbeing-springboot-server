@@ -9,7 +9,9 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A Question.
+ * Question object for populating the database with.
+ * Also maps out it's relationship to other objects such as Survey and
+ * UserQuestionChoice.
  */
 @Entity
 @Table(name = "question")
@@ -24,14 +26,20 @@ public class Question implements Serializable {
     @Column(name = "question")
     private String question;
 
+    // One to Many relationship of the question choices to this question.
     @OneToMany(mappedBy = "question")
-    private Set<Choice> questions = new HashSet<>();
+    private Set<Choice> questionChoices = new HashSet<>();
+
+    // Need to ignore the questions property in the Survey class to prevent infinite recursion happening on a GET request.
     @ManyToOne
-    @JsonIgnoreProperties("surveys")
+    @JsonIgnoreProperties("questions")
     private Survey survey;
 
     @OneToMany(mappedBy = "question")
     private Set<UserQuestionChoice> userQuestionChoices = new HashSet<>();
+
+
+    /*------------------------------------------------------------------------*/
 
     public Long getId() {
         return id;
@@ -54,30 +62,34 @@ public class Question implements Serializable {
         this.question = question;
     }
 
-    public Set<Choice> getQuestions() {
-        return questions;
+    /*----------------- Manage choices to this question -------------------*/
+
+    public Set<Choice> getQuestionChoices() {
+        return this.questionChoices;
     }
 
-    public Question questions(Set<Choice> choices) {
-        this.questions = choices;
+    public Question choices(Set<Choice> questionChoices) {
+        this.questionChoices = questionChoices;
         return this;
     }
 
-    public Question addQuestion(Choice choice) {
-        this.questions.add(choice);
-        choice.setQuestion(this);
+    public Question addQuestionChoice(Choice questionChoice) {
+        this.questionChoices.add(questionChoice);
+        questionChoice.setQuestion(this);
         return this;
     }
 
-    public Question removeQuestion(Choice choice) {
-        this.questions.remove(choice);
-        choice.setQuestion(null);
+    public Question removeQuestionChoice(Choice questionChoice) {
+        this.questionChoices.remove(questionChoice);
+        questionChoice.setQuestion(null);
         return this;
     }
 
-    public void setQuestions(Set<Choice> choices) {
-        this.questions = choices;
+    public void setQuestionChoices(Set<Choice> questionChoices) {
+        this.questionChoices = questionChoices;
     }
+
+    /* --------------------------- Survey -----------------------------*/
 
     public Survey getSurvey() {
         return survey;
@@ -91,6 +103,9 @@ public class Question implements Serializable {
     public void setSurvey(Survey survey) {
         this.survey = survey;
     }
+
+
+    /*----------------------------- User question choices ----------------------------------*/
 
     public Set<UserQuestionChoice> getUserQuestionChoices() {
         return userQuestionChoices;
@@ -116,6 +131,8 @@ public class Question implements Serializable {
     public void setUserQuestionChoices(Set<UserQuestionChoice> userQuestionChoices) {
         this.userQuestionChoices = userQuestionChoices;
     }
+
+    /*---------------------------- Util -------------------------------*/
 
     @Override
     public boolean equals(Object o) {

@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   # Define the datasource, for this development profile we will use an in-memory h2 database
@@ -24,16 +24,18 @@ spring:
     # Hibernate ensure spring does not handle creating the database.
     # It ensures liquibase is dealing with it all on it's own.
     hibernate:
-      ddl-auto: create
+      # ddl-auto: create  -> Using create will drop the current schema and use the new one. For dev purposes this is annoying so change to update.
+      ddl-auto: update
 
   # Need to enable liquibase and give it a username and password to talk to the database with
   # Changelog master is also defined for springboot
+  # To be fair I am not sure if using liquibase makes sense for this project, but might still make sense in terms of explaining the benefits and why it was explored in the first place.
   liquibase:
-    enabled: true
+    enabled: false
     user: root
     password: password
     change-log: classpath:/db/changelog/changelog-master.yml
 
 logging:
   level:
-    root: DEBUG
+    root: INFO

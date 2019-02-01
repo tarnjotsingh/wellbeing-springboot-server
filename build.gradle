@@ -10,9 +10,13 @@ buildscript {
 		classpath("org.liquibase:liquibase-gradle-plugin:2.0.1")
 	}
 }
-//TODO Use the swagger to generate the appropriate code.
-//TODO Once the swagger is generated, can start looking into making it work with the database.
-//TODO Get an Angular/React client up and running for an initial prototype to demo.
+// Should realy stick to using the plugins block since it's the new way of importing plugins to gradle.
+plugins {
+	id "org.detoeuf.swagger-codegen" version "1.7.4"
+}
+//Swagger will only generate the Interface classes to extend from, askin to how header files are separate from the implementation in c++
+//I would ditch the idea of using swagger to generate the API interface class and just focus on a manual implemntation
+//TODO Get an React client up and running for an initial prototype to demo.
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -28,7 +32,6 @@ repositories {
 	mavenCentral()
 }
 
-
 dependencies {
 	
 	compile('org.springframework.boot:spring-boot-starter')
@@ -36,11 +39,13 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile("org.springframework.boot:spring-boot-starter-security")
 	compile('com.auth0:auth0-spring-security-api:1.0.0-rc.3')
-	compile('io.springfox:springfox-swagger2:2.9.2')
 	compile('io.springfox:springfox-core:2.9.2')
-	compile('io.springfox:springfox-swagger-ui:2.9.2')
 	compile('com.h2database:h2')
 	compile('mysql:mysql-connector-java')
+	compile('org.zalando:problem-spring-web:0.24.0-RC.0')
+	compile('io.dropwizard.metrics:metrics-core:4.0.5')
+	compile('io.dropwizard.metrics:metrics-annotation:4.0.5')
+	compile('org.projectlombok:lombok:1.18.4')
 
 	liquibaseRuntime('org.liquibase:liquibase-core')
 	liquibaseRuntime('org.liquibase:liquibase-groovy-dsl:2.0.1')
@@ -56,7 +61,7 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
-
+// Liquibase task to allow connecting to the specified local mysql database
 liquibase {
 	activities {
 		main {
@@ -71,4 +76,23 @@ liquibase {
 			changeLogFile 'src/main/resources/db/changelog/changelog-master.yml'
 		}
 	}
+}
+
+swagger {
+	inputSpec = 'http://petstore.swagger.io/v2/swagger.json'
+	outputDir = file('build/swagger')
+	lang = 'java'
+
+	additionalProperties = [
+			'apiPackage' : 'ondra.spc.integration.client.api',
+			'dateLibrary' : 'java8',
+			'hideGenerationTimestamp': 'true',
+			'invokerPackage' : 'ondra.spc.integration.client',
+			'library' : 'resttemplate',
+			'modelNameSuffix' : 'Dto',
+			'modelPackage' : 'ondra.spc.integration.client.model'
+	]
+	importMappings = [
+			'Dog': 'io.swagger.petstore.client.model.Dog'
+	]
 }

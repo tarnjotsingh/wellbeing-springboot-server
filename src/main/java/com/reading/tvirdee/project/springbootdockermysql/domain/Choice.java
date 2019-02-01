@@ -29,8 +29,10 @@ public class Choice implements Serializable {
 
     @OneToMany(mappedBy = "choice")
     private Set<UserQuestionChoice> userQuestionChoices = new HashSet<>();
+
+    // Need to ignore questionChoices to stop an infinite recursion happening when doing a GET request
     @ManyToOne
-    @JsonIgnoreProperties("questions")
+    @JsonIgnoreProperties("questionChoices")
     private Question question;
 
 

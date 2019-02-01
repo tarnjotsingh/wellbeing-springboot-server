@@ -24,8 +24,11 @@ public class Survey implements Serializable {
     @Column(name = "description")
     private String description;
 
+    // Questions in a one to many relationship mapped by survey as it is basically the foreign in the Question class.
     @OneToMany(mappedBy = "survey")
-    private Set<Question> surveys = new HashSet<>();
+    private Set<Question> questions = new HashSet<>();
+
+    /*---------------------------Getter/Setter-------------*/
 
     public Long getId() {
         return id;
@@ -52,30 +55,34 @@ public class Survey implements Serializable {
         this.description = description;
     }
 
-    public Set<Question> getSurveys() {
-        return surveys;
+    /*------------------- Questions -----------------------*/
+
+    public Set<Question> getQuestions() {
+        return this.questions;
     }
 
     public Survey surveys(Set<Question> questions) {
-        this.surveys = questions;
+        this.questions = questions;
         return this;
     }
 
-    public Survey addSurvey(Question question) {
-        this.surveys.add(question);
+    public Survey addQuestion(Question question) {
+        this.questions.add(question);
         question.setSurvey(this);
         return this;
     }
 
-    public Survey removeSurvey(Question question) {
-        this.surveys.remove(question);
+    public Survey removeQuestion(Question question) {
+        this.questions.remove(question);
         question.setSurvey(null);
         return this;
     }
 
     public void setSurveys(Set<Question> questions) {
-        this.surveys = questions;
+        this.questions = questions;
     }
+
+    /*---------------------------Util----------------------*/
 
     @Override
     public boolean equals(Object o) {
