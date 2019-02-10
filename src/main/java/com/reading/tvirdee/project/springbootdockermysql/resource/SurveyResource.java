@@ -1,7 +1,6 @@
 package com.reading.tvirdee.project.springbootdockermysql.resource;
 
 import com.codahale.metrics.annotation.Timed;
-import com.reading.tvirdee.project.springbootdockermysql.domain.Question;
 import com.reading.tvirdee.project.springbootdockermysql.domain.Survey;
 import com.reading.tvirdee.project.springbootdockermysql.repository.SurveyRepository;
 import com.reading.tvirdee.project.springbootdockermysql.resource.errors.BadRequestAlertException;
@@ -76,7 +75,7 @@ public class SurveyResource {
             .body(result);
     }
 
-    /**
+    /**z
      * GET  /surveys : get all the surveys.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of surveys in body
@@ -123,4 +122,6 @@ public class SurveyResource {
         surveyRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+
+
 }

@@ -3,11 +3,15 @@ package com.reading.tvirdee.project.springbootdockermysql.resource;
 import com.codahale.metrics.annotation.Timed;
 import com.reading.tvirdee.project.springbootdockermysql.domain.Question;
 import com.reading.tvirdee.project.springbootdockermysql.repository.QuestionRepository;
+import com.reading.tvirdee.project.springbootdockermysql.repository.SurveyRepository;
 import com.reading.tvirdee.project.springbootdockermysql.resource.errors.BadRequestAlertException;
+import com.reading.tvirdee.project.springbootdockermysql.resource.errors.ResourceNotFoundException;
 import com.reading.tvirdee.project.springbootdockermysql.resource.util.HeaderUtil;
 import com.reading.tvirdee.project.springbootdockermysql.resource.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +33,13 @@ public class QuestionResource {
 
     private final QuestionRepository questionRepository;
 
-    public QuestionResource(QuestionRepository questionRepository) {
+    private final SurveyRepository surveyRepository;
+
+    public QuestionResource(QuestionRepository questionRepository, SurveyRepository surveyRepository) {
         this.questionRepository = questionRepository;
+        this.surveyRepository = surveyRepository;
     }
+
 
     /**
      * POST  /questions : Create a new question.
@@ -88,6 +96,97 @@ public class QuestionResource {
     }
 
     /**
+     * GET /surveys/{surveyId}/questions : get all the questions for the given surveyId
+     *
+     * @param surveyId the survey to get the questions for
+     * @return the List with status `
+     */
+    @GetMapping("/surveys/{surveyId}/questions")
+    public ResponseEntity<List<Question>> getAllQuestionsByServerId(@PathVariable (value = "surveyId") Long surveyId) {
+        log.debug("REST request to get all Questions by Survey ID : {}", surveyId);
+
+        List<Question> qList = questionRepository.findBySurveyId(surveyId);
+        log.debug("Found questions for survey with Survey ID : {}", surveyId);
+
+        return ResponseEntity.ok().body(qList);
+    }
+
+    /**
+     * GET /surveys/{surveyId}/questions/{questionId}
+     * @param surveyId
+     * @param questionId
+     * @return ResponseEntity of the returned Question object
+     */
+    @GetMapping("/surveys/{surveyId}/questions/{questionId}")
+    public ResponseEntity<Question> getQuestionById(@PathVariable (value = "surveyId") Long surveyId,
+                                                    @PathVariable (value = "questionId") Long questionId) {
+        log.debug("REST request to get Question with ID : {} from Survey with ID : {}", questionId, surveyId);
+
+        Question question = questionRepository.findByIdAndSurveyId(questionId, surveyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question with Id: " + questionId + " in Survey with ID: " + surveyId + " not found."));
+
+        return ResponseEntity.ok().body(question);
+    }
+
+    /**
+     * POST /surveys/{surveyId}/questions
+     *
+     * @param surveyId target survey where the question to create is linked to
+     * @param question body
+     * @return Response entity with the newly created question
+     * @throws URISyntaxException
+     */
+    @PostMapping("/surveys/{surveyId}/questions")
+    public ResponseEntity<Question> createQuestionForSurvey(@PathVariable (value = "surveyId") Long surveyId,
+                                                            @RequestBody Question question) throws URISyntaxException {
+        log.debug("REST request to save Question : {} in survey : {}", question, surveyId);
+        if (question.getId() != null) {
+            throw new BadRequestAlertException("A new question cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+
+        // Attempt to fetch the desired survey to add the new question to.
+        // Exception thrown on failure to find the requested survey.
+        Question toReturn = surveyRepository.findById(surveyId).map(survey -> {
+            question.setSurvey(survey);
+            return questionRepository.save(question);
+        }).orElseThrow( () -> new ResourceNotFoundException("Survey with ID " + surveyId + " not found."));
+
+        return ResponseEntity.created(new URI("/api/surveys/" + surveyId + "/questions/" + toReturn.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, toReturn.getId().toString()))
+                .body(toReturn);
+    }
+
+    /**
+     * PUT /surveys/{surveyId}/questions/{questionId}
+     * For updating a target question in a target survey
+     *
+     * @param surveyId survey with the question to update
+     * @param questionId question to update
+     * @param updatedQuestion JSON body with the new values for the target question
+     * @return ResponseEntity with the body of the updated question.
+     */
+    @PutMapping("/surveys/{surveyId}/questions/{questionId}")
+    public ResponseEntity<Question> updatedQuestion(@PathVariable (value = "surveyId") Long surveyId,
+                                                    @PathVariable (value = "questionId") Long questionId,
+                                                    @RequestBody Question updatedQuestion) throws URISyntaxException {
+        // Check if the survey exists, if survey does not exist then the question does not.
+        // At least not under the target survey.
+        if(!surveyRepository.existsById(surveyId))
+            throw new ResourceNotFoundException("Survey with ID " + surveyId + " not found.");
+
+        // Attempt to find the question via ID and apply updated values.
+        Question question = questionRepository.findById(questionId).map(q -> {
+            //q.setId(updatedQuestion.getId());
+            q.setQuestion(updatedQuestion.getQuestion());
+            return questionRepository.save(q);
+        }).orElseThrow(() -> new ResourceNotFoundException(""));
+
+        return ResponseEntity.created(new URI("/api/surveys/" + surveyId + "/questions/" + question.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, question.getId().toString()))
+                .body(question);
+    }
+
+    /**
      * GET  /questions/:id : get the "id" question.
      *
      * @param id the id of the question to retrieve
@@ -111,12 +210,15 @@ public class QuestionResource {
      * @param id the id of the question to delete
      * @return the ResponseEntity with status 200 (OK)
      */
-    @DeleteMapping("/questions/{id}")
+    @DeleteMapping("/surveys/{surveyId}/questions/{questionId}")
     @Timed
-    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
-        log.debug("REST request to delete Question : {}", id);
+    public ResponseEntity<Void> deleteQuestion(@PathVariable (value = "surveyId") Long surveyId,
+                                               @PathVariable (value = "questionId") Long id) {
+        log.debug("REST request to delete Question : {} in Survey : {}", id, surveyId);
 
-        questionRepository.deleteById(id);
+        //questionRepository.deleteByIdAndSurveyId(surveyId, id);
+        questionRepository.deleteByIdAndSurveyId(id, surveyId);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+
 }
