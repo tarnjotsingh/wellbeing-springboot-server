@@ -1,5 +1,6 @@
 package com.reading.tvirdee.project.springbootdockermysql.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -28,11 +29,12 @@ public class Choice implements Serializable {
     private Integer weight;
 
     @OneToMany(mappedBy = "choice")
+    @JsonIgnore
     private Set<UserQuestionChoice> userQuestionChoices = new HashSet<>();
 
     // Need to ignore questionChoices to stop an infinite recursion happening when doing a GET request
     @ManyToOne
-    @JsonIgnoreProperties("questionChoices")
+    @JsonIgnore
     private Question question;
 
 

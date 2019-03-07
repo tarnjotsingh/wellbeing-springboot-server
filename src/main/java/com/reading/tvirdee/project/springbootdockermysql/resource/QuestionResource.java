@@ -2,16 +2,15 @@ package com.reading.tvirdee.project.springbootdockermysql.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.reading.tvirdee.project.springbootdockermysql.domain.Question;
+import com.reading.tvirdee.project.springbootdockermysql.repository.ChoiceRepository;
 import com.reading.tvirdee.project.springbootdockermysql.repository.QuestionRepository;
 import com.reading.tvirdee.project.springbootdockermysql.repository.SurveyRepository;
 import com.reading.tvirdee.project.springbootdockermysql.resource.errors.BadRequestAlertException;
 import com.reading.tvirdee.project.springbootdockermysql.resource.errors.ResourceNotFoundException;
 import com.reading.tvirdee.project.springbootdockermysql.resource.util.HeaderUtil;
-import com.reading.tvirdee.project.springbootdockermysql.resource.util.ResponseUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +30,10 @@ public class QuestionResource {
 
     private static final String ENTITY_NAME = "question";
 
-    private final QuestionRepository questionRepository;
-
     private final SurveyRepository surveyRepository;
+    private final QuestionRepository questionRepository;
+    //Can look into HATEOAS - hypertext as the engine of application state
+    //https://www.baeldung.com/spring-hateoas-tutorial
 
     public QuestionResource(QuestionRepository questionRepository, SurveyRepository surveyRepository) {
         this.questionRepository = questionRepository;
@@ -158,25 +158,28 @@ public class QuestionResource {
 
     /**
      * PUT /surveys/{surveyId}/questions/{questionId}
-     * For updating a target question in a target survey
+     * For updating a target question in a target survey.
+     * ID for target question to update must be in the JSON body of the request.
      *
      * @param surveyId survey with the question to update
-     * @param questionId question to update
      * @param updatedQuestion JSON body with the new values for the target question
      * @return ResponseEntity with the body of the updated question.
      */
-    @PutMapping("/surveys/{surveyId}/questions/{questionId}")
+    @PutMapping("/surveys/{surveyId}/questions")
     public ResponseEntity<Question> updatedQuestion(@PathVariable (value = "surveyId") Long surveyId,
-                                                    @PathVariable (value = "questionId") Long questionId,
                                                     @RequestBody Question updatedQuestion) throws URISyntaxException {
         // Check if the survey exists, if survey does not exist then the question does not.
         // At least not under the target survey.
         if(!surveyRepository.existsById(surveyId))
             throw new ResourceNotFoundException("Survey with ID " + surveyId + " not found.");
 
-        // Attempt to find the question via ID and apply updated values.
-        Question question = questionRepository.findById(questionId).map(q -> {
-            //q.setId(updatedQuestion.getId());
+        // Ensure that there is an ID in the request body, otherwise PUT obviously will not work.
+        if (updatedQuestion.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+
+        // Attempt to find the question via ID and apply updated values from the request body.
+        Question question = questionRepository.findById(updatedQuestion.getId()).map(q -> {
             q.setQuestion(updatedQuestion.getQuestion());
             return questionRepository.save(q);
         }).orElseThrow(() -> new ResourceNotFoundException(""));

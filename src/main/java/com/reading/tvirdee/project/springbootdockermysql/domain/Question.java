@@ -2,6 +2,7 @@ package com.reading.tvirdee.project.springbootdockermysql.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -37,7 +38,7 @@ public class Question implements Serializable {
     @JsonIgnore
     private Survey survey;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private Set<UserQuestionChoice> userQuestionChoices = new HashSet<>();
 
 
