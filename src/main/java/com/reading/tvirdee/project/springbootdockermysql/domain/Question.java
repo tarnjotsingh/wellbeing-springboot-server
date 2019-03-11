@@ -2,6 +2,7 @@ package com.reading.tvirdee.project.springbootdockermysql.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javassist.expr.Cast;
 import org.springframework.data.rest.core.annotation.RestResource;
 
@@ -33,6 +34,7 @@ public class Question implements Serializable {
     // Set cascade type to all to ensure that parent entity values are reflected
     // Cascade also means that if the parent is deleted, all children are deleted. (Composite relation)
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<Choice> questionChoices = new HashSet<>();
 
     // Need to ignore the questions property in the Survey class to prevent infinite recursion happening on a GET request.
