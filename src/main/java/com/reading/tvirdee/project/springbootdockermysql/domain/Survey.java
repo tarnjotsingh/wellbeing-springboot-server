@@ -1,7 +1,7 @@
 package com.reading.tvirdee.project.springbootdockermysql.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,8 +28,8 @@ public class Survey implements Serializable {
     private String description;
 
     // Questions in a one to many relationship mapped by survey as it is basically the foreign in the Question class.
-    @OneToMany(mappedBy = "survey")
-    @JsonIgnore
+    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Question> questions = new HashSet<>();
 
     /*---------------------------Getter/Setter-------------*/
