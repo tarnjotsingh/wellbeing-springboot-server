@@ -43,10 +43,10 @@ dependencies {
 	compile('io.springfox:springfox-core:2.9.2')
 	compile('com.h2database:h2')
 	compile('mysql:mysql-connector-java')
+	compile('org.projectlombok:lombok')
 	compile('org.zalando:problem-spring-web:0.24.0-RC.0')
 	compile('io.dropwizard.metrics:metrics-core:4.0.5')
 	compile('io.dropwizard.metrics:metrics-annotation:4.0.5')
-	compile('org.projectlombok:lombok:1.18.4')
 
 	liquibaseRuntime('org.liquibase:liquibase-core')
 	liquibaseRuntime('org.liquibase:liquibase-groovy-dsl:2.0.1')
