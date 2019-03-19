@@ -40,6 +40,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.data:spring-data-rest-core')
 	compile('org.springframework.security.oauth:spring-security-oauth2:2.3.5.RELEASE')
+	compile('org.springframework.security:spring-security-jwt:1.0.10.RELEASE')
 	compile('io.springfox:springfox-core:2.9.2')
 	compile('com.h2database:h2')
 	compile('mysql:mysql-connector-java')
