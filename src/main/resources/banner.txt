@@ -4,7 +4,7 @@
    ${AnsiColor.BRIGHT_YELLOW}  \ \  \    \ \_____  \    \|\  \${AnsiColor.BLUE} \  \ \   ____\|/ \ \  \ \   __  \
    ${AnsiColor.BRIGHT_YELLOW}   \ \  \____\|____|\  \  __\_\  \${AnsiColor.BLUE} \  \ \  \___|    \ \  \ \  \|\  \
    ${AnsiColor.BRIGHT_YELLOW}    \ \_______\____\_\  \|\_______\${AnsiColor.BLUE} \__\ \__\        \ \__\ \_______\
-   ${AnsiColor.BRIGHT_YELLOW}     \|_______|\_________\|_______|\${AnsiColor.BLUE}|__|\|__|         \|__|\|_______|
+   ${AnsiColor.BRIGHT_YELLOW}     \|_______|\_________\|_______|${AnsiColor.BLUE}\|__|\|__|         \|__|\|_______|
    ${AnsiColor.BRIGHT_YELLOW}              \|_________|
 
 ${AnsiColor.BRIGHT_BLUE}:: Running Spring Boot ${spring-boot.version} ::
