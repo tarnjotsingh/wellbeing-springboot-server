@@ -158,52 +158,6 @@ public class ChoiceResource {
                 .body(toReturn);
     }
 
-    // I think I need another put request thing here to handle taking in an array of choices to update.
-
-    /**
-     * PUT /surveys/{surveyId}/questions/{questionId}/choices :
-     * Update a LIST of choices for a given surveyQuestion
-     *
-     * Note that because this is a put request, any new choices that may be included into the JSON
-     * will have to be ignored. New values can be added using a POST request provided by an endpoint
-     * defined in the ChoiceResource.
-     *
-     * @param surveyId Survey that the question is linked to
-     * @param questionId Question that the collection of choices to update are linked to
-     * @param updatedChoiceList JSON body with all of SET of updated question choices. Set is used to prevent duplicate entries being
-     *                          provided.
-     * @return Set of the updated choices to confirm the success of the operation.
-     * @throws URISyntaxException
-     */
-    @PutMapping("/surveys/{surveyId}/questions/{questionId}/choices/list")
-    @Timed
-    public ResponseEntity<Set<Choice>> updateChoicesForSurveyQuestion(@PathVariable(value = "surveyId") Long surveyId,
-                                                                       @PathVariable(value = "quesitonId") Long questionId,
-                                                                       @RequestBody Set<Choice> updatedChoiceList ) throws URISyntaxException {
-        log.debug("PUT request to update SET of choices for question with ID {} for survey with ID {}", questionId, surveyId);
-        //Check if the question/survey exists before continuing, no point if it doesn't exist
-        if(!questionRepository.existsByIdAndSurveyId(questionId, surveyId))
-            throw new ResourceNotFoundException("Question with ID " + questionId + " Survey ID " + surveyId + " not found.");
-
-        /* Utilise streams to process the values to update and build a new with the new values, this method
-         * should ignore values that cannot be found.
-         */
-        Set<Choice> toReturn = updatedChoiceList
-                .stream()
-                .map(choice -> choiceRepository.findByIdAndQuestionId(choice.getId(), questionId)
-                            .map(c -> {
-                                c.setChoice(choice.getChoice());
-                                c.setWeight(choice.getWeight());
-                                return choiceRepository.save(c);
-                            }).orElseThrow(() -> new ResourceNotFoundException(
-                                "Choice with ID " + choice.getId() + " for question with ID " + questionId + " not found."
-                        )))
-                .collect(Collectors.toSet());
-
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, "setofchoices"))
-                .body(toReturn);
-    }
-
     /**
      * GET  /choices : get all the choices.
      *
