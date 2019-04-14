@@ -19,6 +19,11 @@ public class UserQuestionChoice implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /* Users
+     */
+    @ManyToOne
+    private Users user;
+
     @Column(name = "time_stamp")
     private Long timeStamp;
 
@@ -29,6 +34,8 @@ public class UserQuestionChoice implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties("userQuestionChoices")
     private Choice choice;
+
+    /*--------------------Getter/Setter--------------------*/
 
     public Long getId() {
         return id;
