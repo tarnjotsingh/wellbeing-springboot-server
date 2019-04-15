@@ -8,6 +8,7 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("org.liquibase:liquibase-gradle-plugin:2.0.1")
+		classpath("io.github.swagger2markup:swagger2markup-gradle-plugin:1.3.3")
 	}
 }
 // Should realy stick to using the plugins block since it's the new way of importing plugins to gradle.
@@ -23,6 +24,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'org.liquibase.gradle'
+apply plugin: 'io.github.swagger2markup'
 
 group = 'com.reading.tvirdee.project'
 version = '0.0.1-SNAPSHOT'

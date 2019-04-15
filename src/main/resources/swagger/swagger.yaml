@@ -1,497 +1,1193 @@
 swagger: '2.0'
 info:
-  description: >-
-    Server for student wellbeing application.
-  version: 1.0k.0
-  title: Student mental health survey API
-  termsOfService: 'http://swagger.io/terms/'
-  contact:
-    email: gv009864@reading.ac.uk
-  # license:
-  #   name: Apache 2.0
-  #   url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-    
-host: wellbeing.swagger.io
-
-basePath: /v2
-
+  description: Student wellbeing application API
+  version: '1.0'
+  title: Api Documentation
+  termsOfService: 'urn:tos'
+  contact: {
+    name: 'Tarnjot Singh Virdee (24009864)',
+    email: 'gv009864@reading.ac.uk'
+  }
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:8082'
+basePath: /
 tags:
-  - name: user
-    description: Operations about user
-    externalDocs:
-      description: Find out more about our store
-      url: 'http://swagger.io'
-  
-  - name: survey
-    description: Manage surveys in database
-    
-  
-      
-schemes:
-  - https
-  - http
-  
+  - name: choice-resource
+    description: Choice Resource
+  - name: multiple-auth-resource
+    description: Multiple Auth Resource
+  - name: question-resource
+    description: Question Resource
+  - name: survey-resource
+    description: Survey Resource
+  - name: user-question-choice-resource
+    description: User Question Choice Resource
+  - name: user-resource
+    description: User Resource
 paths:
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Created user object
-          required: true
-          schema:
-            $ref: '#/definitions/User'
-      responses:
-        default:
-          description: successful operation
-  /user/createWithArray:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ''
-      operationId: createUsersWithArrayInput
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: List of user object
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/User'
-      responses:
-        default:
-          description: successful operation
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ''
-      operationId: createUsersWithListInput
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: List of user object
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/User'
-      responses:
-        default:
-          description: successful operation
-  /user/login:
+  /api:
     get:
       tags:
-        - user
-      summary: Logs user into the system
-      description: ''
-      operationId: loginUser
+        - user-resource
+      summary: test
+      operationId: testUsingGET_1
       produces:
-        - application/xml
-        - application/json
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: true
-          type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: true
-          type: string
+        - '*/*'
       responses:
         '200':
-          description: successful operation
+          description: OK
           schema:
             type: string
-          headers:
-            X-Rate-Limit:
-              type: integer
-              format: int32
-              description: calls per hour allowed by the user
-            X-Expires-After:
-              type: string
-              format: date-time
-              description: date in UTC when token expires
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/choices:
     get:
       tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
+        - choice-resource
+      summary: getAllChoices
+      operationId: getAllChoicesUsingGET
       produces:
-        - application/xml
-        - application/json
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  '/user/{username}':
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
-          required: true
-          type: string
+        - '*/*'
       responses:
         '200':
-          description: successful operation
+          description: OK
           schema:
-            $ref: '#/definitions/User'
-        '400':
-          description: Invalid username supplied
+            type: array
+            items:
+              $ref: '#/definitions/Choice'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
         '404':
-          description: User not found
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - choice-resource
+      summary: createChoice
+      operationId: createChoiceUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: choice
+          description: choice
+          required: true
+          schema:
+            $ref: '#/definitions/Choice'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Choice'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
     put:
       tags:
-        - user
-      summary: Updated user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      produces:
-        - application/xml
+        - choice-resource
+      summary: updateChoice
+      operationId: updateChoiceUsingPUT
+      consumes:
         - application/json
+      produces:
+        - '*/*'
       parameters:
-        - name: username
-          in: path
-          description: name that need to be updated
-          required: true
-          type: string
         - in: body
-          name: body
-          description: Updated user object
+          name: choice
+          description: choice
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/Choice'
       responses:
-        '400':
-          description: Invalid user supplied
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Choice'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
         '404':
-          description: User not found
+          description: Not Found
+      deprecated: false
+  '/api/choices/{id}':
+    get:
+      tags:
+        - choice-resource
+      summary: getChoice
+      operationId: getChoiceUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Choice'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
     delete:
       tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
+        - choice-resource
+      summary: deleteChoice
+      operationId: deleteChoiceUsingDELETE
       produces:
-        - application/xml
-        - application/json
+        - '*/*'
       parameters:
-        - name: username
+        - name: id
           in: path
-          description: The name that needs to be deleted
+          description: id
           required: true
-          type: string
+          type: integer
+          format: int64
       responses:
-        '400':
-          description: Invalid username supplied
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /api/ping:
+    get:
+      tags:
+        - multiple-auth-resource
+      summary: getPing
+      operationId: getPingUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
         '404':
-          description: User not found
-
-  /survey:
+          description: Not Found
+      deprecated: false
+  /api/questions:
+    get:
+      tags:
+        - question-resource
+      summary: getAllQuestions
+      operationId: getAllQuestionsUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
     post:
       tags:
-        - survey
-      summary: Create a new survey
-      description: This can only be done by users of type EXPERT
-      operationId: createSurvey
-      produces:
+        - question-resource
+      summary: createQuestion
+      operationId: createQuestionUsingPOST
+      consumes:
         - application/json
+      produces:
+        - '*/*'
       parameters:
         - in: body
-          name: body
-          description: Create survey object
+          name: question
+          description: question
           required: true
           schema:
-            $ref: '#/definitions/Survey'
+            $ref: '#/definitions/Question'
       responses:
-        200:
-          description: Success
-          
-  /survey/createWithArray:
-    post:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Question'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
       tags:
-        - survey
-      summary: Creates a collection of surveys given input array
-      description: ''
-      operationId: createSurveysWithArrayInput
-      produces:
+        - question-resource
+      summary: updateQuestion
+      operationId: updateQuestionUsingPUT
+      consumes:
         - application/json
+      produces:
+        - '*/*'
       parameters:
         - in: body
-          name: body
-          description: List of survey objects
+          name: question
+          description: question
           required: true
+          schema:
+            $ref: '#/definitions/Question'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Question'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/questions/{id}':
+    get:
+      tags:
+        - question-resource
+      summary: getQuestion
+      operationId: getQuestionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Question'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/surveys:
+    get:
+      tags:
+        - survey-resource
+      summary: getAllSurveys
+      operationId: getAllSurveysUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
           schema:
             type: array
             items:
               $ref: '#/definitions/Survey'
-      responses:
-        default:
-          description: successful operation
-  '/survey/{survey_id}':
-    get:
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
       tags:
-        - survey
-      summary: Get a survey by id
-      description: ''
-      operationId: getSurveyById
-      produces:
+        - survey-resource
+      summary: createSurvey
+      operationId: createSurveyUsingPOST
+      consumes:
         - application/json
+      produces:
+        - '*/*'
       parameters:
-        - name: survey_id
-          in: path
-          description: 'The id that needs to be fetched. Use survey1 for testing. '
+        - in: body
+          name: survey
+          description: survey
           required: true
-          type: integer
+          schema:
+            $ref: '#/definitions/Survey'
       responses:
         '200':
-          description: successful operation
+          description: OK
           schema:
             $ref: '#/definitions/Survey'
-        '400':
-          description: Invalid survey id supplied
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
         '404':
-          description: Survey not found
+          description: Not Found
+      deprecated: false
     put:
       tags:
-        - survey
-      summary: Updated survey
-      description: This can only be done by the authorised user.
-      operationId: updateSurvey
-      produces:
+        - survey-resource
+      summary: updateSurvey
+      operationId: updateSurveyUsingPUT
+      consumes:
         - application/json
+      produces:
+        - '*/*'
       parameters:
-        - name: survey_id
-          in: path
-          description: survey that needs to be updated
-          required: true
-          type: string
         - in: body
-          name: body
-          description: Updated user object
+          name: survey
+          description: survey
           required: true
           schema:
             $ref: '#/definitions/Survey'
       responses:
-        '400':
-          description: Invalid survey id supplied
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Survey'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
         '404':
-          description: Survey not found
+          description: Not Found
+      deprecated: false
+  '/api/surveys/{id}':
+    get:
+      tags:
+        - survey-resource
+      summary: getSurvey
+      operationId: getSurveyUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Survey'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
     delete:
       tags:
-        - survey
-      summary: Delete survey
-      description: This can only be done by the aurthorised use.
-      operationId: deleteSurvey
+        - survey-resource
+      summary: deleteSurvey
+      operationId: deleteSurveyUsingDELETE
       produces:
-        - application/json
+        - '*/*'
       parameters:
-        - name: survey_id
+        - name: id
           in: path
-          description: The survey that needs to be deleted
+          description: id
           required: true
-          type: string
+          type: integer
+          format: int64
       responses:
-        '400':
-          description: Invalid survey id supplied
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  '/api/surveys/{surveyId}/questions':
+    get:
+      tags:
+        - question-resource
+      summary: getAllQuestionsByServerId
+      operationId: getAllQuestionsByServerIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
         '404':
-          description: Survey not found
-
-securityDefinitions:
-  petstore_auth:
-    type: oauth2
-    authorizationUrl: 'http://wellbeing.swagger.io/oauth/dialog'
-    flow: implicit
-    scopes:
-      'write:surveys': modify surveys in your account
-      'read:surveys': read existing surveys
-  api_key:
-    type: apiKey
-    name: api_key
-    in: header
-
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - question-resource
+      summary: createQuestionForSurvey
+      operationId: createQuestionForSurveyUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: question
+          description: question
+          required: true
+          schema:
+            $ref: '#/definitions/Question'
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Question'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - question-resource
+      summary: updatedQuestion
+      operationId: updatedQuestionUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: updatedQuestion
+          description: updatedQuestion
+          required: true
+          schema:
+            $ref: '#/definitions/Question'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Question'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/surveys/{surveyId}/questions/{questionId}':
+    get:
+      tags:
+        - question-resource
+      summary: getQuestionById
+      operationId: getQuestionByIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: questionId
+          in: path
+          description: questionId
+          required: true
+          type: integer
+          format: int64
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Question'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    delete:
+      tags:
+        - question-resource
+      summary: deleteQuestion
+      operationId: deleteQuestionUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: questionId
+          in: path
+          description: questionId
+          required: true
+          type: integer
+          format: int64
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  '/api/surveys/{surveyId}/questions/{questionId}/choices':
+    get:
+      tags:
+        - choice-resource
+      summary: getAllChoicesForSurveyQuestion
+      operationId: getAllChoicesForSurveyQuestionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: questionId
+          in: path
+          description: questionId
+          required: true
+          type: integer
+          format: int64
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Choice'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - choice-resource
+      summary: createChoiceForSurveyQuestion
+      operationId: createChoiceForSurveyQuestionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: newChoice
+          description: newChoice
+          required: true
+          schema:
+            $ref: '#/definitions/Choice'
+        - name: questionId
+          in: path
+          description: questionId
+          required: true
+          type: integer
+          format: int64
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Choice'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - choice-resource
+      summary: updateChoiceForSurveyQuestion
+      operationId: updateChoiceForSurveyQuestionUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: questionId
+          in: path
+          description: questionId
+          required: true
+          type: integer
+          format: int64
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: updatedChoice
+          description: updatedChoice
+          required: true
+          schema:
+            $ref: '#/definitions/Choice'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Choice'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/surveys/{surveyId}/questions/{questionId}/choices/{choiceId}':
+    get:
+      tags:
+        - choice-resource
+      summary: getChoiceForSurveyQuestion
+      operationId: getChoiceForSurveyQuestionUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: choiceId
+          in: path
+          description: choiceId
+          required: true
+          type: integer
+          format: int64
+        - name: questionId
+          in: path
+          description: questionId
+          required: true
+          type: integer
+          format: int64
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Choice'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    delete:
+      tags:
+        - choice-resource
+      summary: deleteChoiceForSurveyQuestion
+      operationId: deleteChoiceForSurveyQuestionUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: choiceId
+          in: path
+          description: choiceId
+          required: true
+          type: integer
+          format: int64
+        - name: questionId
+          in: path
+          description: questionId
+          required: true
+          type: integer
+          format: int64
+        - name: surveyId
+          in: path
+          description: surveyId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /api/user-question-choices:
+    get:
+      tags:
+        - user-question-choice-resource
+      summary: getAllUserQuestionChoices
+      operationId: getAllUserQuestionChoicesUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserQuestionChoice'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - user-question-choice-resource
+      summary: createUserQuestionChoice
+      operationId: createUserQuestionChoiceUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: userQuestionChoice
+          description: userQuestionChoice
+          required: true
+          schema:
+            $ref: '#/definitions/UserQuestionChoice'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserQuestionChoice'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - user-question-choice-resource
+      summary: updateUserQuestionChoice
+      operationId: updateUserQuestionChoiceUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: userQuestionChoice
+          description: userQuestionChoice
+          required: true
+          schema:
+            $ref: '#/definitions/UserQuestionChoice'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserQuestionChoice'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/user-question-choices/{id}':
+    get:
+      tags:
+        - user-question-choice-resource
+      summary: getUserQuestionChoice
+      operationId: getUserQuestionChoiceUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/UserQuestionChoice'
+      deprecated: false
+    delete:
+      tags:
+        - user-question-choice-resource
+      summary: deleteUserQuestionChoice
+      operationId: deleteUserQuestionChoiceUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /api/users:
+    get:
+      tags:
+        - user-resource
+      summary: all
+      operationId: allUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Users'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - user-resource
+      summary: persist
+      operationId: persistUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: users
+          description: users
+          required: true
+          schema:
+            $ref: '#/definitions/Users'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Users'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
 definitions:
-  Category:
+  Choice:
     type: object
     properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-    xml:
-      name: Category
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      username:
-        type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      userStatus:
-        type: integer
-        format: int32
-        description: User Status
-    xml:
-      name: User
-  Tag:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-    xml:
-      name: Tag
-      
-  Survey:
-    type: object
-    required:
-      - name
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-        example: Survey1
-      description:
-        type: string
-        example: Survey measuring level of stress
-      # This is a One to Many relationship
-      # Need to figure out how to do this properly
-      questions:
-        type: string
-        
-  Question:
-    type: object
-    required:
-      - question
-    properties:
-      id:
-        type: integer
-        format: int64
-      question: 
-        type: string
-        example: What is your favorite snack?
-      # This is a One to Many relationship
-      # Need to figure out how to do this properly
-      userQuestionChoices:
-        type: string
-          
-  
-  QuestionChoice:
-    type: object
-    required:
-      - choice
-    properties:
-      id:
-        type: integer
-        format: int64
       choice:
         type: string
-        example: Potato crisps
+      id:
+        type: integer
+        format: int64
       weight:
         type: integer
         format: int32
-      # Many to One relationship with a question
-      question:
-        type: string
-  
-      
-  Pet:
+    title: Choice
+  ModelAndView:
     type: object
-    required:
-      - name
-      - photoUrls
+    properties:
+      empty:
+        type: boolean
+      model:
+        type: object
+      modelMap:
+        type: object
+        additionalProperties:
+          type: object
+      reference:
+        type: boolean
+      status:
+        type: string
+        enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+      view:
+        $ref: '#/definitions/View'
+      viewName:
+        type: string
+    title: ModelAndView
+  OAuth2AccessToken:
+    type: object
+    properties:
+      additionalInformation:
+        type: object
+      expiration:
+        type: string
+        format: date-time
+      expired:
+        type: boolean
+      expiresIn:
+        type: integer
+        format: int32
+      refreshToken:
+        $ref: '#/definitions/OAuth2RefreshToken'
+      scope:
+        type: array
+        items:
+          type: string
+      tokenType:
+        type: string
+      value:
+        type: string
+    title: OAuth2AccessToken
+  OAuth2RefreshToken:
+    type: object
+    properties:
+      value:
+        type: string
+    title: OAuth2RefreshToken
+  Question:
+    type: object
     properties:
       id:
         type: integer
         format: int64
-      category:
-        $ref: '#/definitions/Category'
-      name:
+      question:
         type: string
-        example: doggie
-      photoUrls:
+      questionChoices:
         type: array
-        xml:
-          name: photoUrl
-          wrapped: true
         items:
-          type: string
-      tags:
+          $ref: '#/definitions/Choice'
+      userQuestionChoices:
         type: array
-        xml:
-          name: tag
-          wrapped: true
         items:
-          $ref: '#/definitions/Tag'
-      status:
-        type: string
-        description: pet status in the store
-        enum:
-          - available
-          - pending
-          - sold
-    xml:
-      name: Pet
-  ApiResponse:
+          $ref: '#/definitions/UserQuestionChoice'
+    title: Question
+  Survey:
     type: object
     properties:
-      code:
+      description:
+        type: string
+      id:
         type: integer
-        format: int32
-      type:
+        format: int64
+      name:
         type: string
-      message:
+      questions:
+        type: array
+        items:
+          $ref: '#/definitions/Question'
+      surveys:
+        type: array
+        items:
+          $ref: '#/definitions/Question'
+    title: Survey
+  UserQuestionChoice:
+    type: object
+    properties:
+      choice:
+        $ref: '#/definitions/Choice'
+      id:
+        type: integer
+        format: int64
+      question:
+        $ref: '#/definitions/Question'
+      timeStamp:
+        type: integer
+        format: int64
+    title: UserQuestionChoice
+  Users:
+    type: object
+    properties:
+      active:
+        type: boolean
+      id:
+        type: integer
+        format: int64
+      password:
         type: string
-        
-externalDocs:
-
-  description: Find out more about Swagger
-  url: 'http://swagger.io'
+      username:
+        type: string
+    title: Users
+  View:
+    type: object
+    properties:
+      contentType:
+        type: string
+    title: View
